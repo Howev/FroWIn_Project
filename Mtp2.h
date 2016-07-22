@@ -41,7 +41,7 @@
 /* Various sizes */
 #define MTP_MAX_SIZE 	277  /* 276 + 1 for RSIS */
 #define LSSU_SIZE 		6
-#define LSSU_SIZE		5
+#define FISU_SIZE		5
 
 /* MTP2 Link states */
 #define MTP_IDLE			0

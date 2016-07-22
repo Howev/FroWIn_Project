@@ -1,0 +1,68 @@
+      // MTP接收的数据消息是用UDP接收的 //
+
+
+1、在 make_lssu 函数中的处理的：链路故障和失去定位就重设mtp，
+switch (lssu_status) {
+		case LSSU_SIOS:
+		case LSSU_SIO:
+			reset_mtp(link);
+但在
+		case LSSU_SIN:
+		case LSSU_SIE:
+		case LSSU_SIPO:
+		case LSSU_SIB:
+			head->bib = link->curbib;
+			head->bsn = link->lastfsnacked;
+			head->fib = link->curfib;
+			head->fsn = link->curfsn;
+			break;
+		}
+这里为什么是把正常定位和紧急定位，处理机故障，忙的状态字段是统一处理信令单元？
+
+疑惑地方：SIPO处理机故障和SIB忙不是一个不正常的链路状态或定位检测异常的情况，而正常定位和紧急定位情况却不用做任何处理？
+
+
+2、MTP2是如何接收MTP1的信令链路数据的？如何进行差错检测和接收处理（信令单元定界），在demo代码中没看到有相关的处理部分。
+
+--> 信令单元定界在硬件板卡中已处理。
+
+3、链路状态控制部分，拥塞控制部分，如何与MTP3通信传输数据，发送链路状态等还没完全搞清楚。
+
+4、各部分的定时器的定时计时时间通过设置后，如何启动计时和判断各个字段的定时器超时触发后面的流程处理？以及在定时器未超时时间内处理完数据的定时器如何清零。
+
+ --> 定时器的清零处理在 ： ss7_schedule_del(link->master, &link->t1);
+
+5、mtp2的流量控制和拥塞检测是怎么实现的？是通过mtp3指示mtp2还是mtp2实现？ 是如何判断拥塞情况的？
+
+6、看不明白：
+void flush_bufs(struct mtp2 *link)
+{
+	struct ss7_msg *list, *cur;
+
+	list = link->tx_buf;
+
+	link->tx_buf = NULL;
+
+	while (list) {
+		cur = list;
+		list = list->next;
+		free(cur);
+	}
+
+	list = link->tx_q;
+
+	link->tx_q = NULL;
+
+	while (list) {
+		cur = list;
+		list = list->next;
+		free(cur);
+	}
+
+	link->retransmit_pos = NULL;
+}
+有何作用和功能？
+
+7、
+
+
