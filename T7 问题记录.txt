@@ -1,4 +1,10 @@
-　在信令链路的差错控制中定义了T7定时器，其作用是，假设在重发缓冲器中至少还有一个发出但还未收到证实的MSU，如果到T7超时仍未收到新的证实，则产生链路故障指示。对于64K链路，允许范围是0.5～2秒，建议2秒。 
+# apt-get install ntpdate
+# dpkg-reconfigure tzdata
+# ntpdate time.nist.gov  //使用网络时间
+# 　
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+在信令链路的差错控制中定义了T7定时器，其作用是，假设在重发缓冲器中至少还有一个发出但还未收到证实的MSU，如果到T7超时仍未收到新的证实，则产生链路故障指示。对于64K链路，允许范围是0.5～2秒，建议2秒。 
 
 
 
@@ -13,3 +19,182 @@
 /**************************/
 
  link->mtp3_timer[MTP3_TIMER_Q707_T2] = ss7_schedule_event(link->master, link->master->mtp3_     timers[MTP3_TIMER_Q707_T2], mtp3_timer_q707_t2_expiry, link);
+
+//mtp3.c mtp3_start()
+set:
+Q707_t1 == 9000 ms;
+Q707_t2 == 60000 ms;
+
+
+
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+1472873 23:06:39.299 DEBUG SS7 send tx_q data @mtp2.c:322
+1472874 23:06:39.299 DEBUG SS7 add timer t7 @mtp2.c:337
+
+1473085 23:06:40.708 DEBUG run loop:71532
+1473086 23:06:40.708 DEBUG >>>>schedule timeout
+1473087 23:06:40.708 DEBUG SS7 run timer
+1473088 23:06:40.708 DEBUG SS7 run timer callback
+
+1473089 23:06:40.709 DEBUG SS7 T7 expired on link SLC: 0 ADJPC: 010101
+
+1473090 23:06:40.709 DEBUG SS7 mtp2_setstate:0
+1473091 23:06:40.709 DEBUG SS7 Link state change: INSERVICE -> IDLE
+1473092 23:06:40.709 DEBUG SS7 mtp2_setstate:0
+1473093 23:06:40.709 DEBUG SS7 Link state change: IDLE -> NOTALIGNED
+1473094 23:06:40.709 DEBUG SS7 add t2:50000
+1473095 23:06:40.709 DEBUG SS7 add timer:50000
+1473096 23:06:40.709 mtp_receive[0]:25
+
+
+
+/////////////////////////////////////////////////////////////////////
+
+1479878 23:07:21.913 DEBUG SS7 add timer t7 @mtp2.c:337
+1479879 23:07:21.913 DEBUG SS7 add timer:1250
+
+1480089 23:07:23.334 DEBUG run loop:71743
+1480090 23:07:23.334 DEBUG >>>>schedule timeout
+1480091 23:07:23.334 DEBUG SS7 run timer
+1480092 23:07:23.335 DEBUG SS7 run timer callback
+1480093 23:07:23.335 DEBUG SS7 T7 expired on link SLC: 0 ADJPC: 010101
+1480094 23:07:23.335 DEBUG SS7 mtp2_setstate:0
+1480095 23:07:23.335 DEBUG SS7 Link state change: INSERVICE -> IDLE
+1480096 23:07:23.336 DEBUG SS7 mtp2_setstate:0
+1480097 23:07:23.336 DEBUG SS7 Link state change: IDLE -> NOTALIGNED
+1480098 23:07:23.336 DEBUG SS7 add t2:50000
+1480099 23:07:23.336 DEBUG SS7 add timer:50000
+
+
+
+
+
+218972 01:12:26.001 mtp_receive[0]:25
+
+
+
+Payload payload;
+ 92         while (trunk->recvCardQ_.get(&payload))
+ 93         {
+ 94             ZLOG_DEBUG("get tecv queue size:[%d]\n",trunk->recvCardQ_.size());
+ 95             ZLOG_DEBUG("get recv queue:%d\n", payload.seq);
+ 96 
+ 97             mtp_receive(ss7, payload.ts, payload.data,(payload.length - PAYLOAD_HDR_SIZE));
+ 98         }
+ 99         //if (trunk->recvCardQ_.get(&payload))
+100         //{
+101         //    ZLOG_DEBUG("get tecv queue size:[%d]\n",trunk->recvCardQ_.size());
+102         //    ZLOG_DEBUG("get recv queue:%d\n", payload.seq);
+103 
+104         //    mtp_receive(ss7, payload.ts, payload.data,(payload.length - PAYLOAD_HDR_SIZE));
+105         //}
+106         //else
+107         //{ 
+108         //    ZLOG_DEBUG("recv no data\n");
+109         //}
+
+【】【】【】【】【】【】【】【】【】【】【】【】【】【】【】【】【】【】【】】【】【】
+/date: 2016.09.1
+
+
+06:58:03.447 DEBUG SS7 add timer t7 3 @mtp2.c:345
+2868436 06:58:03.447 ss7Send:25, seq:41575 @mtp_wrapper.cpp:242
+
+
+2868621 06:58:04.843 recv data[7]:127.0.0.1:7777:20, seq:41565 @mtp_card.cpp:132
+2868622 0000| 7E FF 1E DD 0C 00 FC 60 - C7 57 00 00 00 5D A2 9F     ~......`.W...]..
+2868623 0010| A0 00 00 00                                           ....
+2868624 06:58:04.843 ss7Receive:5 seq:41565 @mtp_wrapper.cpp:210
+2868625 0000| 9F A0 00 00 00                                        .....
+2868626 06:58:04.843 DEBUG put recv queue:41565
+2868627 06:58:04.905 DEBUG run loop:172653
+2868628 06:58:04.905 DEBUG >>>>schedule timeout
+2868629 06:58:04.905 DEBUG SS7 run timer
+2868630 06:58:04.906 DEBUG SS7 run timer callback:3393
+2868631 06:58:04.906 DEBUG SS7 T7 expired on link SLC: 0 ADJPC: 020202
+2868632 06:58:04.906 DEBUG SS7 mtp2_setstate:0
+2868633 06:58:04.906 DEBUG SS7 Link state change: INSERVICE -> IDLE
+2868634 06:58:04.906 DEBUG SS7 link->state[INSERVICE] :del timers:[t1 t2 t3 t4 t7]
+
+
+
+
+
+添加：1、链路失去定位后，清除发送队列和接收队列里的数据；2、链路置为IDLE后删除全部定时器操作；3、mtp_receive一次接收多个数据处理；4、判断接收队列如果接收多个相同的FISU，则不重复入队处理
+
+
+
+_______+_+_+__________________________________________+_+_+_+_______________________________+_+_+____________________+_+_+_
+
+
+
+/ date: 2016.9.21 /
+
+Problem 1：
+
+*ss7_run(void *arg)  --->g_mtpcard.sendVaild() --->ss7_write(ss7, ss7->link[??]->fd);  >>>fd 如何根据不同的E1和TS确定要传送数据的相对应的链路？？ 
+
+Problem 2：
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Data : 2016.10.27 Wed
+
+多核板，E1板卡，信令板卡调试问题记录：
+
+	1、使用单条链路测试：用信令板卡的SG程序运行，多核上跑的程序不断收到SIOS链路故障信息，同时两端都可以收发SIO、SIE、但多核端接收的SIE比发送的多，定位不成功，同时多核端的程序不断往SG端发FISU。
+
+	2、目前在E1子板上使用近端环回测试，可以正常定位成功。
+
+1、程序根据payload协议格式修整链路起始时隙的处理；2、升级了e1板卡软版本，底层转发数据增加了缓存处理；3，针对测试多链路,在Udp发送队列增加判断相同的FISU数据不入队处理，并添加判断队列长度值从配置文件设置
+
+
+usigned int
+因为十六进制常用地址表示内存地址，而内存地址是没有符号的，因此，usigned int 比long更合适用来表示16位地址。
+
+short int 
+
+cout.put 该函数显示一个字符。 
+
+C++尽量使用const int Month = 12； >>>> Month首字母大写常表示是常量，少使用#define ！！
+
+C++强制类型转换运算符：static_cast<long(即：typeName)> (value)
+eg: static_cast<char> thorn
+
+
+
+第四章
+
+·创建和使用数组
+·创建和适应C-风格字符串
+·创建和使用string类字符串
+·使用方法getline()和get()读取字符串
+·混合使用字符串和数字
+·创建和使用结构
+·创建和使用共同体
+·创建和使用枚举
+·创建和使用指针
+·使用new和delete管理动态内存
+·创建动态数组
+·创建动态结构
+·自动存储、静态存储和动态存储
+·vector和array类简介
+
+string：
+
+函数strcat()将字符串加到字符数组末尾：
+strcat(charr1, charr2);
+
+union 共同体 主要用于节省内存，共同体长度为最大成员的长度，不可以同时对成员赋值，
+
+enum 工具提供了另一种创建符号常量的方式，这种方式可以代替const。
+
+
+new 和delete
+

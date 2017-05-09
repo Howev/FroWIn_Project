@@ -1,0 +1,551 @@
+*******************************************************************************************
+BB	Backbone Bearer
+DF	Don’t Fragment
+FFS	For Further Study
+GTP	GPRS Tunneling Protocol
+GTP-C	GTP Control
+GTP-U	GTP User
+IANA	Internet Assigned Number Authority
+ICMP	Internet Control Message Protocol
+IE	Information Element
+IP	Internet Protocol
+IPv4	Internet Protocol version 4
+IPv6	Internet Protocol version 6
+MTU	Maximum Transmission Unit
+QoS	Quality of Service
+RANAP	Radio Access Network Application Part
+RNC	Radio Network Controller
+TEID	Tunnel Endpoint IDentifier
+TFT	Traffic Flow Template
+UDP	User Datagram Protocol
+UTRAN	UMTS Terrestrial Radio Access Network
+Gn interface	Interface between GPRS Support Nodes (GSNs) within a PLMN
+Gp interface	Interface between GPRS Support Nodes (GSNs) in different PLMNs
+
+
+
+3G	3rd Generation
+AMR	Adaptive Multirate speech codec
+ATM	Asynchronous Transfer Mode
+BER	Bit Error Rate
+BS	Bearer Service
+CC	Call Control
+CN	Core Network
+CRC	Cyclic Redundancy Check
+CS	Circuit Switched
+DTX	Discontinuous Transmission
+FDD	Frequency Division Duplex
+FER	Frame Erasure Ratio
+FTP	File Transfer Protocol
+GERAN	GSM/EDGE Radio Access Network
+GPRS	General Packet Radio Service
+GSM	Global System for Mobile Communication
+IETF	Internet Engineering Task Force
+IP	Internet Protocol
+ISDN	Integrated Services Digital Network
+MO	Mobile Originating Call
+MPEG	Moving Pictures Expert Group
+MT	Mobile Terminal
+MTC	Mobile Terminated Call
+NS	Network Service
+PDP	Packet Data Protocol
+PDU	Protocol Data Unit
+PS	Packet Switched
+PSTN	Public Switched Telephone Network
+QoS	Quality of Service
+RA	Routing Area
+RAB	Radio Access Bearer
+RAN	Radio Access Network
+RLC	Radio Link Control
+RSVP	Resource Reservation Protocol
+RT	Real Time
+RTP	Real Time Transport Protocol
+SAP	Service Access Point
+SDU	Service Data Unit
+SGSN	Serving GPRS Support Node
+SLA	Service Level Agreement
+SMS	Short Message Service
+SVC	Switched Virtual Circuit
+UDP	User Datagram Protocol
+TBC	Token Bucket Counter
+TDD	Time Division Duplex
+TE	Terminal Equipment
+TSPEC	Traffic Specification
+UE	User Equipment
+UMTS	Universal Mobile Telecommunication System
+UTRA	UMTS Terrestrial Radio Access
+UTRAN	UMTS Terrestrial Radio Access Network
+
+
+
+
+*******************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SubscriberLocationReport-Res ::= SEQUENCE {
+	extensionContainer	ExtensionContainer	OPTIONAL, 
+	..., 
+	na-ESRK		[0] ISDN-AddressString	OPTIONAL,
+	na-ESRD		[1] ISDN-AddressString	OPTIONAL,
+	h-gmlc-Address	[2]	GSN-Address	OPTIONAL,
+	mo-lrShortCircuitIndicator	[3] NULL		OPTIONAL,
+	reportingPLMNList	[4] ReportingPLMNList	OPTIONAL,
+	lcs-ReferenceNumber	[5]	LCS-ReferenceNumber	OPTIONAL }
+
+-- na-ESRK and na-ESRD are mutually exclusive
+--
+-- exception handling
+-- receipt of both na-ESRK and na-ESRD shall be treated the same as a return error
+
+******************* core/SubscriberLocationReport-Res.h *******************************
+
+ 29 typedef struct sa {
+ 30     struct ExtensionContainer   *extensionContainer /* OPTIONAL */;
+ 31     /*
+ 32      * This type is extensible,
+ 33      * possible extensions are below.
+ 34      */
+ 35     ISDN_AddressString_t    *na_ESRK    /* OPTIONAL */;
+ 36     ISDN_AddressString_t    *na_ESRD    /* OPTIONAL */;
+ 37     GSN_Address_t   *h_gmlc_Address /* OPTIONAL */;
+ 38     NULL_t  *mo_lrShortCircuitIndicator /* OPTIONAL */;
+ 39     struct ReportingPLMNList    *reportingPLMNList  /* OPTIONAL */;
+ 40     LCS_ReferenceNumber_t   *lcs_ReferenceNumber    /* OPTIONAL */;
+ 41     
+ 42     /* Context for parsing across buffer boundaries */
+ 43     asn_struct_ctx_t _asn_ctx;_
+ 44 } SubscriberLocationReport_Res_t;
+ 45 
+ 46 /* Implementation */
+ 47 extern asn_TYPE_descriptor_t asn_DEF_SubscriberLocationReport_Res;
+ 48 
+
+ /* SubscriberLocationReport-Res */
+ 29 typedef struct SubscriberLocationReport_Res {
+ 30     struct ExtensionContainer   *extensionContainer /* OPTIONAL */;
+ 31     /*
+ 32      * This type is extensible,
+ 33      * possible extensions are below.
+ 34      */
+ 35     ISDN_AddressString_t    *na_ESRK    /* OPTIONAL */;
+ 36     ISDN_AddressString_t    *na_ESRD    /* OPTIONAL */;
+ 37     GSN_Address_t   *h_gmlc_Address /* OPTIONAL */;
+ 38     NULL_t  *mo_lrShortCircuitIndicator /* OPTIONAL */;
+ 39     struct ReportingPLMNList    *reportingPLMNList  /* OPTIONAL */;
+ 40     LCS_ReferenceNumber_t   *lcs_ReferenceNumber    /* OPTIONAL */;
+ 41     
+ 42     /* Context for parsing across buffer boundaries */
+ 43     asn_struct_ctx_t _asn_ctx;
+ 44 } SubscriberLocationReport_Res_t;
+ 45 
+ 46 /* Implementation */
+ 47 extern asn_TYPE_descriptor_t asn_DEF_SubscriberLocationReport_Res;
+ 48 
+
+*****************************************************************
+PLMN-Id ::= OCTET STRING (SIZE (3))
+	-- The internal structure is defined as follows:
+	-- octet 1 bits 4321	Mobile Country Code 1st digit
+	--         bits 8765	Mobile Country Code 2nd digit
+	-- octet 2 bits 4321	Mobile Country Code 3rd digit
+	--         bits 8765	Mobile Network Code 3rd digit
+	--			or filler (1111) for 2 digit MNCs
+	-- octet 3 bits 4321	Mobile Network Code 1st digit
+	--         bits 8765	Mobile Network Code 2nd digit
+
+******************************************************************
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct RoutingInfoForLCS_Res_Code
+ 931 {
+ 932     SubscriberIdentity_C    targetMS;
+ 933     LCSLocationInfo_C       lcsLocationInfo;
+ 934 
+ 935     //struct ExtensionContainer_Code   *extensionContainer;// OPTIONAL
+ 936     GSN_Address_C   *v_gmlc_Address; // OPTIONAL
+ 937     GSN_Address_C   *h_gmlc_Address; // OPTIONAL
+ 938     GSN_Address_C   *ppr_Address;    // OPTIONAL
+ 939     GSN_Address_C   *additional_v_gmlc_Address;// OPTIONAL
+ 940 } RoutingInfoForLCS_Res_C;
+
+
+
+/* Forward declarations */
+ 24 struct ExtensionContainer;
+ 25 
+ 26 /* RoutingInfoForLCS-Res */
+ 27 typedef struct RoutingInfoForLCS_Res {
+ 28     SubscriberIdentity_t     targetMS;
+ 29     LCSLocationInfo_t    lcsLocationInfo;
+ 30     struct ExtensionContainer   *extensionContainer /* OPTIONAL */;
+ 31     /*
+ 32      * This type is extensible,
+ 33      * possible extensions are below.
+ 34      */
+ 35     GSN_Address_t   *v_gmlc_Address /* OPTIONAL */;
+ 36     GSN_Address_t   *h_gmlc_Address /* OPTIONAL */;
+ 37     GSN_Address_t   *ppr_Address    /* OPTIONAL */;
+ 38     GSN_Address_t   *additional_v_gmlc_Address  /* OPTIONAL */;
+ 39     
+ 40     /* Context for parsing across buffer boundaries */
+ 41     asn_struct_ctx_t _asn_ctx;
+ 42 } RoutingInfoForLCS_Res_t;
+ 43         
+ 44 /* Implementation */
+ 45 extern asn_TYPE_descriptor_t asn_DEF_RoutingInfoForLCS_Res;
+ 46     
+
+
+
+
+************************** /decode.c *****************************
+// RoutingInfoForLCS_Arg
+1740 int DECODE_FUNC(RoutingInfoForLCS_Arg)
+1741 {   
+1742     asn_dec_rval_t dec;
+1743     RoutingInfoForLCS_Arg_t *res = NULL;
+1744     
+1745     dec = ber_decode(0, &asn_DEF_RoutingInfoForLCS_Arg, (void **)&res, data, length);
+1746     
+1747     if (dec.code != RC_OK)
+1748     {
+1749         printf("Broken decoding at byte %ld\n",(long)dec.consumed);
+1750         ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Arg, res); // free
+1751         return -1;
+1752     }
+1753     
+1754 //  asn_fprint(stdout, &asn_DEF_RoutingInfoForLCS_Arg, res);// 输出解码数据
+1755     
+1756     // mlcNumber
+1757     decode_ISDN_AddressString(&(res->mlcNumber), &(arg->mlcNumber));
+1758     
+1759     // targetMS
+1760     decode_SubscriberIdentity(&(res->targetMS), &(arg->targetMS));
+1761     
+1762     ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Arg, res); // free
+1763     
+1764     return 0;
+1765 }
+
+// RoutingInfoForLCS_Res
+1768 int DECODE_FUNC(RoutingInfoForLCS_Res)
+1769 {
+1770     asn_dec_rval_t dec;
+1771     RoutingInfoForLCS_Res_t *res = NULL;
+1772 
+1773     dec = ber_decode(0, &asn_DEF_RoutingInfoForLCS_Res, (void **)&res, data, length);
+1774 
+1775     if (dec.code != RC_OK)
+1776     {
+1777         printf("Broken decoding at byte %ld\n",(long)dec.consumed);
+1778         ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Res, res); // free
+1779         return -1;
+1780     }
+1781 
+1782 //  asn_fprint(stdout, &asn_DEF_RoutingInfoForLCS_Res, res);// 输出解码数据
+1783 
+1784     // targetMS
+1785     decode_SubscriberIdentity(&(res->targetMS), &(arg->targetMS));
+1786 
+1787     // lcsLocationInfo
+1788     decode_LCSLocationInfo(&(res->lcsLocationInfo), &(arg->lcsLocationInfo));
+1789 
+1790     // v_gmlc_Address
+1791     if (res->v_gmlc_Address != NULL)// OPTIONAL
+1792     {
+1793         arg->v_gmlc_Address = (GSN_Address_C *)calloc(1, sizeof(GSN_Address_C));
+1794         decode_GSN_Address(res->v_gmlc_Address, arg->v_gmlc_Address);
+1795     }
+1796 
+1797     // h_gmlc_Address
+1798     if (res->h_gmlc_Address != NULL)// OPTIONAL
+1799     {
+1800         arg->h_gmlc_Address = (GSN_Address_C *)calloc(1, sizeof(GSN_Address_C));
+1801         decode_GSN_Address(res->h_gmlc_Address, arg->h_gmlc_Address);
+1802	 }    
+1803 
+1804     // ppr_Address
+1805     if (res->ppr_Address != NULL)// OPTIONAL
+1806     {
+1807         arg->ppr_Address = (GSN_Address_C *)calloc(1, sizeof(GSN_Address_C));
+1808         decode_GSN_Address(res->ppr_Address, arg->ppr_Address);
+1809     }
+1810 
+1811     // additional_v_gmlc_Address
+1812     if (res->additional_v_gmlc_Address != NULL)// OPTIONAL
+1813     {
+1814         arg->additional_v_gmlc_Address = (GSN_Address_C *)calloc(1, sizeof(GSN_Address_C));
+         decode_GSN_Address(res->additional_v_gmlc_Address, arg->additional_v_gmlc_Address);
+1816     }
+1817 
+1818     ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Res, res); // free
+1819 
+1820     return 0;
+1821 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// RoutingInfoForLCS_Res
+3736 int ENCODE_FUNC(RoutingInfoForLCS_Res)
+3737 {
+3738     RoutingInfoForLCS_Res_t *res;
+3739 
+3740     res = (RoutingInfoForLCS_Res_t *)calloc(1, sizeof(RoutingInfoForLCS_Res_t));
+3741 
+3742     // targetMS
+3743     if (encode_SubscriberIdentity(&(arg->targetMS), &(res->targetMS)) != 0)
+3744     {
+3745         printf("The targetMS of RoutingInfoForLCS_Res encode error.\n");
+3746         ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Res, res);// free
+3747         return -1;
+3748     }
+3749 
+3750     // lcsLocationInfo
+3751     if (encode_LCSLocationInfo(&(arg->lcsLocationInfo), &(res->lcsLocationInfo)) != 0)
+3752     {
+3753         printf("The lcsLocationInfo of RoutingInfoForLCS_Res encode error.\n");
+3754         ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Res, res);// free
+3755         return -1;
+3756     }
+3757 
+3758     // v_gmlc_Address
+3759     if (arg->v_gmlc_Address != NULL)// OPTIONAL
+3760     {
+3761         res->v_gmlc_Address = (GSN_Address_t *)calloc(1, sizeof(GSN_Address_t));
+
+3763         if (encode_GSN_Address(arg->v_gmlc_Address, res->v_gmlc_Address) != 0)
+3764         {
+3765             printf("The v_gmlc_Address of RoutingInfoForLCS_Res encode error.\n");
+3766             ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Res, res);// free
+3767             return -1;
+3768         }
+3769     }
+3770 
+3771     // h_gmlc_Address
+3772     if (arg->h_gmlc_Address != NULL)// OPTIONAL
+3773     {
+3774         res->h_gmlc_Address = (GSN_Address_t *)calloc(1, sizeof(GSN_Address_t));
+3775 
+3776         if (encode_GSN_Address(arg->h_gmlc_Address, res->h_gmlc_Address) != 0)
+3777         {
+3778             printf("The h_gmlc_Address of RoutingInfoForLCS_Res encode error.\n");
+3779             ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Res, res);// free
+3780             return -1;
+3781         }
+
+}
+3783 
+3784     // ppr_Address
+3785     if (arg->ppr_Address != NULL)// OPTIONAL
+3786     {
+3787         res->ppr_Address = (GSN_Address_t *)calloc(1, sizeof(GSN_Address_t));
+3788 
+3789         if (encode_GSN_Address(arg->ppr_Address, res->ppr_Address) != 0)
+3790         {
+3791             printf("The ppr_Address of RoutingInfoForLCS_Res encode error.\n");
+3792             ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Res, res);// free
+3793             return -1;
+3794         }
+3795     }
+3796 
+3797     // additional_v_gmlc_Address
+3798     if (arg->additional_v_gmlc_Address != NULL)// OPTIONAL
+3799     {
+3800         res->additional_v_gmlc_Address = (GSN_Address_t *)calloc(1, sizeof(GSN_Address_t));
+3801 
+3802         if (encode_GSN_Address(arg->additional_v_gmlc_Address, res->additional_v_gmlc_Address) !=      0)
+3803         {
+3804             printf("The additional_v_gmlc_Address of RoutingInfoForLCS_Res encode error.\n");
+3805             ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Res, res);// free
+3806             return -1;
+3807         }
+3808     }
+3809 
+3810     asn_enc_rval_t enc;
+3811     HexBuf_t buf;
+3812     buf.size = 0;
+3813 
+3814     enc = der_encode(&asn_DEF_RoutingInfoForLCS_Res, res, CallBack, (void *)(&buf));
+3815     ASN_STRUCT_FREE(asn_DEF_RoutingInfoForLCS_Res, res);// free
+3816 
+3817     if (enc.encoded == -1)
+3818     {
+3819         fprintf(stderr,"Could not encode (at %s)\n",
+3820                 enc.failed_type ? enc.failed_type->name : "unknown");
+3821         return -1;
+3822     }
+3823 
+3824     *length = buf.size;
+3825     memcpy(&data[0], buf.data, buf.size);
+3826 
+3827     return 0;
+3828 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+*************************************** RoutingInfoForSM-Res ******************************************
+
+RoutingInfoForSM-Res ::= SEQUENCE {
+	imsi			IMSI,
+	locationInfoWithLMSI	[0] LocationInfoWithLMSI,
+	extensionContainer	[4] ExtensionContainer	OPTIONAL,
+	...,
+	ip-sm-gwGuidance	[5] IP-SM-GW-Guidance	OPTIONAL }
+
+IP-SM-GW-Guidance ::= SEQUENCE {
+	minimumDeliveryTimeValue	SM-DeliveryTimerValue,
+	recommendedDeliveryTimeValue	SM-DeliveryTimerValue,
+	extensionContainer	ExtensionContainer	OPTIONAL,
+	...}
+
+LocationInfoWithLMSI ::= SEQUENCE {
+	networkNode-Number	[1] ISDN-AddressString,
+	lmsi			LMSI			OPTIONAL,
+	extensionContainer	ExtensionContainer	OPTIONAL,
+	...,
+	gprsNodeIndicator	[5]	NULL		OPTIONAL,
+	-- gprsNodeIndicator is set only if the SGSN number is sent as the 
+	-- Network Node Number
+	additional-Number	[6] Additional-Number	OPTIONAL,
+	networkNodeDiameterAddress	[7] NetworkNodeDiameterAddress	OPTIONAL,
+	additionalNetworkNodeDiameterAddress	[8] NetworkNodeDiameterAddress 	OPTIONAL,
+	thirdNumber	[9] Additional-Number		OPTIONAL,
+	thirdNetworkNodeDiameterAddress	[10] NetworkNodeDiameterAddress	OPTIONAL,
+	imsNodeIndicator	[11] NULL		OPTIONAL 
+	-- gprsNodeIndicator and imsNodeIndicator shall not both be present.
+	-- additionalNumber and thirdNumber shall not both contain the same type of number.
+	}
+
+ 
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+SubscriberLocationReport-Arg ::= SEQUENCE {
+	lcs-Event		LCS-Event,
+	lcs-ClientID	LCS-ClientID, 
+	lcsLocationInfo	LCSLocationInfo,
+	msisdn		[0] ISDN-AddressString	OPTIONAL,
+	imsi			[1] IMSI		OPTIONAL,
+	imei			[2] IMEI		OPTIONAL,
+	na-ESRD		[3] ISDN-AddressString	OPTIONAL,
+	na-ESRK		[4] ISDN-AddressString	OPTIONAL,
+	locationEstimate	[5] Ext-GeographicalInformation	OPTIONAL,
+	ageOfLocationEstimate	[6] AgeOfLocationInformation	OPTIONAL,
+	slr-ArgExtensionContainer	[7] SLR-ArgExtensionContainer	OPTIONAL,
+	... ,
+	add-LocationEstimate	[8] Add-GeographicalInformation	OPTIONAL,
+	deferredmt-lrData	[9] Deferredmt-lrData	OPTIONAL, 
+	lcs-ReferenceNumber	[10] LCS-ReferenceNumber	OPTIONAL,
+	geranPositioningData	[11] PositioningDataInformation	OPTIONAL,
+	utranPositioningData	[12] UtranPositioningDataInfo	OPTIONAL,
+	cellIdOrSai	[13]	CellGlobalIdOrServiceAreaIdOrLAI	OPTIONAL,
+	h-gmlc-Address	[14]	GSN-Address	OPTIONAL,
+	lcsServiceTypeID	[15]	LCSServiceTypeID	OPTIONAL,
+	sai-Present	[17] NULL		OPTIONAL,
+	pseudonymIndicator	[18] NULL		OPTIONAL,
+	accuracyFulfilmentIndicator	[19] AccuracyFulfilmentIndicator	OPTIONAL,
+	velocityEstimate	[20] VelocityEstimate	OPTIONAL,
+	sequenceNumber	[21] SequenceNumber	OPTIONAL,
+	periodicLDRInfo	[22] PeriodicLDRInfo	OPTIONAL,
+	mo-lrShortCircuitIndicator	[23] NULL		OPTIONAL,
+	geranGANSSpositioningData	[24] GeranGANSSpositioningData	OPTIONAL,
+	utranGANSSpositioningData	[25] UtranGANSSpositioningData	OPTIONAL,
+	targetServingNodeForHandover	[26] ServingNodeAddress	OPTIONAL }
+
+	-- one of msisdn or imsi is mandatory
+	-- a location estimate that is valid for the locationEstimate parameter should 
+	-- be transferred in this parameter in preference to the add-LocationEstimate.
+	-- the deferredmt-lrData parameter shall be included if and only if the lcs-Event
+	-- indicates a deferredmt-lrResponse.
+	-- if the lcs-Event indicates a deferredmt-lrResponse then the locationEstimate 
+	-- and the add-locationEstimate parameters shall not be sent if the 
+	-- supportedGADShapes parameter had been received in ProvideSubscriberLocation-Arg
+	-- and the shape encoded in locationEstimate or add-LocationEstimate was not marked
+	-- as supported in supportedGADShapes. In such a case terminationCause 
+	-- in deferredmt-lrData shall be present with value 
+	-- shapeOfLocationEstimateNotSupported. 
+	-- If a lcs event indicates deferred mt-lr response, the lcs-Reference number shall be 
+	-- included. 
+	-- sai-Present indicates that the cellIdOrSai parameter contains a Service Area Identity.         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+RoutingInfoForSM-Arg ::= SEQUENCE {
+	msisdn		[0] ISDN-AddressString,
+	sm-RP-PRI		[1] BOOLEAN,
+	serviceCentreAddress	[2] AddressString,
+	extensionContainer	[6] ExtensionContainer	OPTIONAL,
+	... ,
+	gprsSupportIndicator	[7]	NULL		OPTIONAL,
+	-- gprsSupportIndicator is set only if the SMS-GMSC supports
+	-- receiving of two numbers from the HLR
+	sm-RP-MTI		[8] SM-RP-MTI	OPTIONAL,
+	sm-RP-SMEA	[9] SM-RP-SMEA	OPTIONAL,
+	sm-deliveryNotIntended	[10] SM-DeliveryNotIntended	OPTIONAL,
+	ip-sm-gwGuidanceIndicator	[11] NULL		OPTIONAL,
+	imsi			[12] IMSI		OPTIONAL,
+	t4-Trigger-Indicator	[14] NULL		OPTIONAL,
+	singleAttemptDelivery	[13]	NULL		OPTIONAL,
+	correlationID	[15] CorrelationID	OPTIONAL }
+
+SM-DeliveryNotIntended ::= ENUMERATED {
+	onlyIMSI-requested  (0),
+	onlyMCC-MNC-requested  (1),
+	...}
+
+SM-RP-MTI ::= INTEGER (0..10)
+	-- 0 SMS Deliver 
+	-- 1 SMS Status Report
+	-- other values are reserved for future use and shall be discarded if
+	-- received
+
+SM-RP-SMEA ::= OCTET STRING (SIZE (1..12))
+	-- this parameter contains an address field which is encoded 
+	-- as defined in 3GPP TS 23.040. An address field contains 3 elements :
+	-- 		address-length
+	-- 		type-of-address
+	-- 		address-value
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+USSD-DataCodingScheme ::= OCTET STRING (SIZE (1))
+	-- The structure of the : is defined by
+	-- the Cell Broadcast Data Coding Scheme as described in
+	-- TS 3GPP TS 23.038 [25]
+
+
